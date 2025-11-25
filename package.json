@@ -1,36 +1,31 @@
 {
   "name": "instituto-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "type": "module",
   "dependencies": {
-    "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "typeorm": "^0.3.27",
     "mssql": "^11.0.1",
-    "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.27"
+    "dotenv": "^17.2.3",
+    "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
-    "@types/express": "^5.0.5",
-    "@types/jest": "^30.0.0",
-    "@types/supertest": "^6.0.3",
-    "jest": "^30.2.0",
-    "nodemon": "^3.1.11",
-    "supertest": "^7.1.4",
-    "ts-jest": "^29.4.5",
+    "typescript": "^5.9.3",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.9.3"
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5",
+    "@types/jest": "^30.0.0",
+    "supertest": "^7.1.4",
+    "@types/supertest": "^6.0.3",
+    "@types/express": "^5.0.5",
+    "nodemon": "^3.1.11"
   },
   "scripts": {
-  "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-  "build": "tsc",
-  "start": "node dist/index.js",
-  "test": "jest --passWithNoTests",
-  "test:watch": "jest --watch",
-  "test:e2e": "jest --config ./jest-e2e.config.js"
-}
-
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "test:e2e": "jest --config ./jest-e2e.config.js"
+  }
 }

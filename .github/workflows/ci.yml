@@ -1,0 +1,69 @@
+name: CI - Node.js Backend
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        ports: ["1433:1433"]
+        options: >-
+          --health-cmd "bash -c '(/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\") || exit 1'"
+          --health-interval=10s --health-timeout=5s --health-retries=30
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_PID: "Developer"
+          MSSQL_SA_PASSWORD: ${{ secrets.MSSQL_SA_PASSWORD }}
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 1433
+      DB_USERNAME: sa
+      DB_PASSWORD: ${{ secrets.MSSQL_SA_PASSWORD }}
+      DB_DATABASE: InstitutoDB
+      DB_ENCRYPT: "false"
+      NODE_ENV: test
+
+    steps:
+      # 1️⃣ Obtener el código del repo
+      - uses: actions/checkout@v4
+
+      # 2️⃣ Instalar Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 3️⃣ Esperar a que SQL Server esté listo
+      - name: Wait for SQL Server
+        run: |
+          for i in {1..30}; do
+            /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -U sa -P "${{ secrets.MSSQL_SA_PASSWORD }}" -Q "SELECT 1" && break
+            echo "Waiting for SQL Server..."
+            sleep 2
+          done
+
+      # 4️⃣ Crear base de datos y tablas
+      - name: Create Database & Tables
+        run: |
+          /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -U sa -P "${{ secrets.MSSQL_SA_PASSWORD }}" -Q "CREATE DATABASE InstitutoDB;"
+          /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1 -U sa -P "${{ secrets.MSSQL_SA_PASSWORD }}" -d InstitutoDB -i ./sql/create_schema.sql
+
+      # 5️⃣ Instalar dependencias de Node.js
+      - name: Install dependencies
+        run: npm ci
+
+      # 6️⃣ Compilar TypeScript
+      - name: Build project
+        run: npm run build
+
+      # 7️⃣ Ejecutar tests
+      - name: Run tests
+        run: npm test

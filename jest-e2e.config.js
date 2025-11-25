@@ -5,13 +5,8 @@ export default {
   preset: "ts-jest/presets/default-esm",
   testEnvironment: "node",
   transform: createDefaultPreset().transform,
-  testMatch: [
-    "**/tests/unit/**/*.spec.ts",
-    "**/tests/integration/**/*.spec.ts",
-    "**/tests/e2e/**/*.spec.ts"
-  ],
+  testMatch: ["**/tests/e2e/**/*.spec.ts"],
   extensionsToTreatAsEsm: [".ts"],
   clearMocks: true,
-  verbose: true,
-  testTimeout: 30000 // aumenta el timeout global a 30 segundos
+  verbose: true
 };
